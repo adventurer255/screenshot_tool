@@ -1,5 +1,6 @@
 import sys
 
+import keyboard
 from PyQt5.QtWidgets import QWidget, QApplication, QFileDialog
 from PyQt5.QtCore import Qt, QRect
 from PyQt5.QtGui import QGuiApplication, QColor, QPainter, QPen, QPixmap
@@ -22,7 +23,7 @@ class CaptureScreen(QWidget):
     def initWindow(self):
         self.setMouseTracking(True)
         self.setCursor(Qt.CrossCursor)
-        self.setWindowFlag(Qt.FramelessWindowHint)
+        self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         self.setWindowState(Qt.WindowFullScreen)
 
     def captureFullScreen(self):
@@ -112,7 +113,9 @@ class CaptureScreen(QWidget):
 
 
 if __name__ == "__main__":
+    keyboard.wait(hotkey='f4')
     app = QApplication(sys.argv)
     window = CaptureScreen()
+    # window.setWindowFlags(Qt.WindowStaysOnTopHint)
     window.show()
     sys.exit(app.exec_())
