@@ -7,7 +7,6 @@ from PyQt5.QtGui import QGuiApplication, QColor, QPainter, QPen, QPixmap
 
 
 class CaptureScreen(QWidget):
-
     def __init__(self):
         self.full_screen_image: QPixmap = QPixmap()
         self.painter = QPainter()
@@ -15,6 +14,7 @@ class CaptureScreen(QWidget):
         self.end_position = None
         self.is_mouse_press_left = False
         self.capture_image = None
+        self.window_hint_capture_screen = None
 
         super().__init__()
         self.initWindow()
@@ -77,7 +77,6 @@ class CaptureScreen(QWidget):
         if self.is_mouse_press_left is True:
             self.end_position = event.pos()  # 选取区域结束坐标
             self.update()
-            # self.repaint()
 
     def mouseReleaseEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -94,7 +93,13 @@ class CaptureScreen(QWidget):
         if event.key() == Qt.Key_S:
             if self.capture_image is not None:
                 self.save_image(self.capture_image)  # 保存截图图片
-                self.close()  # 关闭窗口
+                self.close()
+
+        if event.key() == Qt.Key_T:
+            if self.capture_image is not None:
+                self.window_hint_capture_screen = HintCaptureScreen(self, self.capture_image)
+                self.window_hint_capture_screen.show()
+                self.hide()
 
         if event.key() == Qt.Key_Escape:
             if self.capture_image is not None:
@@ -111,11 +116,61 @@ class CaptureScreen(QWidget):
         if path:
             image.save(path)
 
+    def update_and_show(self):
+        if not self.isVisible():
+            self.captureFullScreen()
+            self.update()
+            self.show()
+
+
+class HintCaptureScreen(QWidget):
+    def __init__(self, parent: CaptureScreen, image: QPixmap):
+        self.painter = QPainter()
+        self.parent = parent
+        self.image = image
+        self.start_x = None
+        self.start_y = None
+
+        super().__init__()
+        self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
+        self.resize(image.width(), image.height())
+
+    def initImage(self, image):
+        self.painter.begin(self)
+        self.painter.drawPixmap(0, 0, image)
+        self.painter.end()
+
+    def paintEvent(self, event):
+        self.initImage(self.image)
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            self.start_x = event.x()
+            self.start_y = event.y()
+
+    def mouseMoveEvent(self, event):
+        if not self.start_x or not self.start_y:
+            return
+
+        dis_x = event.x() - self.start_x
+        dis_y = event.y() - self.start_y
+        self.move(self.x() + dis_x, self.y() + dis_y)
+
+    def mouseReleaseEvent(self, event):
+        self.start_x = None
+        self.start_y = None
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Escape:
+            self.close()
+            self.parent.update_and_show()
+
 
 if __name__ == "__main__":
-    keyboard.wait(hotkey='f4')
+    keyboard.wait('shift+f1')
     app = QApplication(sys.argv)
     window = CaptureScreen()
-    # window.setWindowFlags(Qt.WindowStaysOnTopHint)
     window.show()
+    keyboard.add_hotkey('shift+f2', window.update_and_show)
+
     sys.exit(app.exec_())
