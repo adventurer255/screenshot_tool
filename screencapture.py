@@ -9,12 +9,12 @@ from PyQt5.QtGui import QGuiApplication, QColor, QPainter, QPen, QPixmap
 class CaptureScreen(QWidget):
     def __init__(self):
         self.full_screen_image: QPixmap = QPixmap()
-        self.painter = QPainter()
+        self.painter: QPainter = QPainter()
         self.begin_position = None
         self.end_position = None
         self.is_mouse_press_left = False
-        self.capture_image = None
-        self.window_hint_capture_screen = None
+        self.capture_image: QPixmap = QPixmap()
+        self.window_hint_capture_screen: HintCaptureScreen = None
 
         super().__init__()
         self.initWindow()
@@ -62,20 +62,12 @@ class CaptureScreen(QWidget):
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
-            self.begin_position = event.pos()  # 记录选取区域开始的坐标
+            self.begin_position = event.pos()
             self.is_mouse_press_left = True
-        # if event.button() == Qt.RightButton:
-        #     # 如果选取了图片,则按一次右键开始重新截图
-        #     if self.capture_image is not None:
-        #         self.capture_image = None
-        #         # self.paintBackgroundImage()
-        #         self.update()  # update的作用是调用paintEvent
-        #     else:
-        #         self.close()  # 关闭窗口
 
     def mouseMoveEvent(self, event):
         if self.is_mouse_press_left is True:
-            self.end_position = event.pos()  # 选取区域结束坐标
+            self.end_position = event.pos()
             self.update()
 
     def mouseReleaseEvent(self, event):
@@ -84,15 +76,10 @@ class CaptureScreen(QWidget):
             self.repaint()
             self.is_mouse_press_left = False
 
-    # def mouseDoubleClickEvent(self, event):
-    #     if self.capture_image is not None:
-    #         self.save_image()  # 保存截图图片
-    #         self.close()  # 关闭窗口
-
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_S:
             if self.capture_image is not None:
-                self.save_image(self.capture_image)  # 保存截图图片
+                self.save_image(self.capture_image)
                 self.close()
 
         if event.key() == Qt.Key_T:
@@ -104,13 +91,10 @@ class CaptureScreen(QWidget):
         if event.key() == Qt.Key_Escape:
             if self.capture_image is not None:
                 self.capture_image = None
-                # self.paintBackgroundImage()
                 self.update()  # update的作用是调用paintEvent
             else:
-                self.close()  # 关闭窗口
+                self.close()
 
-    # def save_image(self):
-    #     self.capture_image.save("picture.png")
     def save_image(self, image):
         path, _ = QFileDialog.getSaveFileName(self, 'Save Image', './', 'File(*.png)')
         if path:
