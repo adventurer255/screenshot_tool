@@ -97,12 +97,6 @@ class CaptureScreen(QWidget):
         if path:
             image.save(path)
 
-    def update_and_show(self):
-        if not self.isVisible():
-            self.captureFullScreen()
-            self.update()
-            self.show()
-
 
 class HintCaptureScreen(QWidget):
     def __init__(self, parent: CaptureScreen, image: QPixmap):
@@ -149,12 +143,9 @@ class HintCaptureScreen(QWidget):
 
 if __name__ == "__main__":
     import sys
-    import keyboard
 
-    keyboard.wait('shift+f1')
     app = QApplication(sys.argv)
     window = CaptureScreen()
     window.show()
-    keyboard.add_hotkey('shift+f2', window.update_and_show)
 
     sys.exit(app.exec_())
