@@ -5,12 +5,12 @@ from PyQt5.QtGui import QGuiApplication, QColor, QPainter, QPen, QPixmap
 
 class CaptureScreen(QWidget):
     def __init__(self, *args, **kwargs):
-        self.full_screen_image: QPixmap = QPixmap()
+        self.full_screen_image: QPixmap = None
         self.painter: QPainter = QPainter()
         self.begin_position = None
         self.end_position = None
         self.is_mouse_press_left = False
-        self.capture_image: QPixmap = QPixmap()
+        self.capture_image: QPixmap = None
         self.window_hint_capture_screen: HintCaptureScreen = None
 
         super().__init__(*args, **kwargs)
@@ -83,7 +83,7 @@ class CaptureScreen(QWidget):
             if self.capture_image is not None:
                 self.window_hint_capture_screen = HintCaptureScreen(image=self.capture_image)
                 self.window_hint_capture_screen.show()
-                self.hide()
+                self.close()
 
         if event.key() == Qt.Key_Escape:
             if self.capture_image is not None:
