@@ -81,7 +81,7 @@ class CaptureScreen(QWidget):
 
         if event.key() == Qt.Key_T:
             if self.capture_image is not None:
-                self.window_hint_capture_screen = HintCaptureScreen(self, self.capture_image)
+                self.window_hint_capture_screen = HintCaptureScreen(image=self.capture_image)
                 self.window_hint_capture_screen.show()
                 self.hide()
 
@@ -99,14 +99,14 @@ class CaptureScreen(QWidget):
 
 
 class HintCaptureScreen(QWidget):
-    def __init__(self, parent: CaptureScreen, image: QPixmap):
+    def __init__(self, parent: CaptureScreen = None, flag=Qt.WindowFlags(), image: QPixmap = None):
         self.painter = QPainter()
         self.parent = parent
         self.image = image
         self.start_x = None
         self.start_y = None
 
-        super().__init__()
+        super().__init__(parent, flag)
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         self.resize(image.width(), image.height())
 
@@ -138,7 +138,6 @@ class HintCaptureScreen(QWidget):
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Escape:
             self.close()
-            self.parent.update_and_show()
 
 
 if __name__ == "__main__":
