@@ -1,3 +1,5 @@
+from typing import Optional
+
 from PyQt5.QtWidgets import QWidget, QApplication, QFileDialog
 from PyQt5.QtCore import Qt, QRect
 from PyQt5.QtGui import QGuiApplication, QColor, QPainter, QPen, QPixmap
@@ -5,13 +7,13 @@ from PyQt5.QtGui import QGuiApplication, QColor, QPainter, QPen, QPixmap
 
 class CaptureScreen(QWidget):
     def __init__(self, *args, **kwargs):
-        self.full_screen_image: QPixmap = None
+        self.full_screen_image: Optional[QPixmap] = None
         self.painter: QPainter = QPainter()
         self.begin_position = None
         self.end_position = None
-        self.is_mouse_press_left = False
-        self.capture_image: QPixmap = None
-        self.window_hint_capture_screen: HintCaptureScreen = None
+        self.is_mouse_press_left: bool = False
+        self.capture_image: Optional[QPixmap] = None
+        self.window_hint_capture_screen: Optional[HintCaptureScreen] = None
 
         super().__init__(*args, **kwargs)
         self.initWindow()
@@ -99,7 +101,7 @@ class CaptureScreen(QWidget):
 
 
 class HintCaptureScreen(QWidget):
-    def __init__(self, parent: CaptureScreen = None, flag=Qt.WindowFlags(), image: QPixmap = None):
+    def __init__(self, parent: Optional[CaptureScreen] = None, flag=Qt.WindowFlags(), image: Optional[QPixmap] = None):
         self.painter = QPainter()
         self.parent = parent
         self.image = image

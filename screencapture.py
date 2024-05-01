@@ -1,14 +1,16 @@
+import sys
+from typing import Optional
+
 from Lib.screencapture_window import CaptureScreen
 from Lib.tool_window import ToolWindow
 from PyQt5 import QtWidgets
-import sys
 
 
 class Window(ToolWindow):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.screen_capture_button.clicked.connect(self.create_screencapture_window)
-        self.screencapture_window: CaptureScreen = None
+        self.screencapture_window: Optional[CaptureScreen] = None
 
     def create_screencapture_window(self):
         self.screencapture_window = CaptureScreen()
